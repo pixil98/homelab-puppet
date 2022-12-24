@@ -1,4 +1,6 @@
-# The base profile should include component modules that will be on all nodes
+# profile/base.pp
+# Only put classes here that ALL nodes should have
 class profile::base {
-
+  include profile::base::firewall
+  include profile::base::sshd
 }
