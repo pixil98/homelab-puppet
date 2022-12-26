@@ -1,0 +1,30 @@
+# r10k.yml
+# Validates that Libation will build on commits to any branch
+---
+name: r10k
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  puppetfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install r10k
+        run: |
+          sudo apt-get update
+          sudo apt-get install r10k
+      - name: r10k
+        run: |
+          rm -rf modules/*
+          r10k puppetfile install -v
+      - name: Commit modules
+        run: |
+          git config --global user.name 'r10k worfklow'
+          git config --global user.email 'pixil98@users.noreply.github.com'
+          git add --force modules
+          git commit -m "Module dependencies"
+          git push
