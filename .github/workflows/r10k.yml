@@ -25,6 +25,8 @@ jobs:
         run: |
           git config --global user.name 'r10k worfklow'
           git config --global user.email 'pixil98@users.noreply.github.com'
-          git add --force modules
-          git commit -m "Module dependencies"
-          git push
+          if [[ `git status --porcelain` ]]; then
+            git add --force modules
+            git commit -m "Module dependencies"
+            git push
+          fi
