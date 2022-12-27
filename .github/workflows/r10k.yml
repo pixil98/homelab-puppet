@@ -1,5 +1,5 @@
 # r10k.yml
-# Validates that Libation will build on commits to any branch
+# Downloads module dependencies and commits them
 ---
 name: r10k
 
