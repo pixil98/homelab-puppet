@@ -1,7 +1,6 @@
 class profile::kubernetes::controller {
   #TODO: get user from hiera
   class { 'docker': }
-  -> User <| title == provisioned-user |> { groups +> 'docker' }
 
   # Open ports as per https://rancher.com/docs/rke/latest/en/os/#ports
   firewall { '00080 accept - Ingress controller (HTTP)':
