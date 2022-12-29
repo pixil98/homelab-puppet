@@ -1,7 +1,7 @@
 class profile::kubernetes::worker {
   #TODO: get user from hiera
   class { 'docker': }
-  -> User <| title == aaron |> { groups +> 'docker' }
+  -> User <| title == provisioned-user |> { groups +> 'docker' }
 
   # Install nfs tools for mounting nfs volumes
   package { 'nfs-common':
