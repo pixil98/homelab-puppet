@@ -34,7 +34,7 @@ class profile::kubernetes::worker {
     proto  => tcp,
     action => accept,
   }
-    firewall { '07946 accept - Metallb udp':
+  firewall { '07946 accept - Metallb udp':
     dport  => 7946,
     proto  => udp,
     action => accept,
