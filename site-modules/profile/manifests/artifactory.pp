@@ -10,6 +10,7 @@ class profile::artifactory {
   }
 
   package { 'jfrog-artifactory-oss':
-    ensure => present,
+    ensure  => present,
+    require => Apt::Source['artifactory'],
   }
 }
