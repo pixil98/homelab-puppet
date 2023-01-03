@@ -13,4 +13,16 @@ class profile::artifactory {
     ensure  => present,
     require => Apt::Source['artifactory'],
   }
+
+  firewall { '08081 accept - Artifactory Web UI':
+    dport  => 8081,
+    proto  => tcp,
+    action => accept,
+  }
+
+  firewall { '08082 accept - Artifactory Service Port':
+    dport  => 8082,
+    proto  => tcp,
+    action => accept,
+  }
 }
