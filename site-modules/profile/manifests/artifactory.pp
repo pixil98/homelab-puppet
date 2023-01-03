@@ -14,6 +14,12 @@ class profile::artifactory {
     require => Apt::Source['artifactory'],
   }
 
+  service { 'artifactory':
+    ensure  => running,
+    require => Package['jfrog-artifactory-oss'],
+  }
+
+
   firewall { '08081 accept - Artifactory Web UI':
     dport  => 8081,
     proto  => tcp,
