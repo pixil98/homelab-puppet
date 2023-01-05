@@ -9,7 +9,7 @@ class profile::artifactory {
     },
   }
 
-  package { 'jfrog-artifactory-oss':
+  package { 'jfrog-artifactory-jcr':
     ensure  => present,
     require => Apt::Source['artifactory'],
   }
@@ -18,7 +18,6 @@ class profile::artifactory {
     ensure  => running,
     require => Package['jfrog-artifactory-oss'],
   }
-
 
   firewall { '08081 accept - Artifactory Web UI':
     dport  => 8081,
