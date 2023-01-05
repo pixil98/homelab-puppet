@@ -16,7 +16,7 @@ class profile::artifactory {
 
   service { 'artifactory':
     ensure  => running,
-    require => Package['jfrog-artifactory-oss'],
+    require => Package['jfrog-artifactory-jcr'],
   }
 
   firewall { '08081 accept - Artifactory Web UI':
