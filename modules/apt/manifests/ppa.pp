@@ -25,10 +25,10 @@
 #
 define apt::ppa (
   String $ensure                        = 'present',
-  Optional[Array[String]] $options      = $::apt::ppa_options,
+  Optional[Array[String]] $options      = $apt::ppa_options,
   Optional[String] $release             = fact('os.distro.codename'),
   Optional[String] $dist                = $facts['os']['name'],
-  Optional[String] $package_name        = $::apt::ppa_package,
+  Optional[String] $package_name        = $apt::ppa_package,
   Boolean $package_manage               = false,
 ) {
   unless $release {
@@ -40,7 +40,7 @@ define apt::ppa (
   }
 
   # Validate the resource name
-  if $name !~ /^ppa:([a-zA-Z0-9\-_]+)\/([a-zA-z0-9\-_]+)$/ {
+  if $name !~ /^ppa:([a-zA-Z0-9\-_]+)\/([a-zA-z0-9\-_\.]+)$/ {
     fail("Invalid PPA name: ${name}")
   }
 
@@ -61,14 +61,15 @@ define apt::ppa (
   $sources_list_d_filename  = "${dash_filename_no_specialchars}-${release}.list"
 
   if versioncmp($facts['os']['release']['full'], '15.10') >= 0 and
-    versioncmp($facts['os']['release']['full'], '21.04') < 0 {
+  versioncmp($facts['os']['release']['full'], '21.04') < 0 {
     $trusted_gpg_d_filename = "${underscore_filename_no_specialchars}.gpg"
   } else {
     $trusted_gpg_d_filename = "${dash_filename_no_specialchars}.gpg"
   }
 
-  # This is the location of our main exec script  
-  $script_path = "/opt/puppetlabs/puppet/cache/add-apt-repository-${dash_filename_no_specialchars}-${release}.sh"
+  # This is the location of our main exec script.
+  $cache_path = $facts['puppet_vardir']
+  $script_path = "${cache_path}/add-apt-repository-${dash_filename_no_specialchars}-${release}.sh"
 
   if $ensure == 'present' {
     if $package_manage {
@@ -78,7 +79,7 @@ define apt::ppa (
       $_require = File['sources.list.d']
     }
 
-    $_proxy = $::apt::_proxy
+    $_proxy = $apt::_proxy
     if $_proxy['host'] {
       if $_proxy['https'] {
         $_proxy_env = ["http_proxy=http://${$_proxy['host']}:${$_proxy['port']}", "https_proxy=https://${$_proxy['host']}:${$_proxy['port']}"]
@@ -91,10 +92,11 @@ define apt::ppa (
 
     unless $sources_list_d_filename in $facts['apt_sources'] {
       $script_content = epp('apt/add-apt-repository.sh.epp', {
-        command                 => ['/usr/bin/add-apt-repository', shell_join($options), $name],
-        sources_list_d_path     => $::apt::sources_list_d,
-        sources_list_d_filename => $sources_list_d_filename,
-      })
+          command                 => ['/usr/bin/add-apt-repository', shell_join($options), $name],
+          sources_list_d_path     => $apt::sources_list_d,
+          sources_list_d_filename => $sources_list_d_filename,
+        }
+      )
 
       file { "add-apt-repository-script-${name}":
         ensure  => 'file',
@@ -109,8 +111,11 @@ define apt::ppa (
         logoutput   => 'on_failure',
         notify      => Class['apt::update'],
         require     => $_require,
+        before      => File["${apt::sources_list_d}/${sources_list_d_filename}"],
       }
     }
+
+    file { "${apt::sources_list_d}/${sources_list_d_filename}": }
   }
   else {
     tidy { "remove-apt-repository-script-${name}":
@@ -118,7 +123,7 @@ define apt::ppa (
     }
 
     tidy { "remove-apt-repository-${name}":
-      path   => "${::apt::sources_list_d}/${sources_list_d_filename}",
+      path   => "${apt::sources_list_d}/${sources_list_d_filename}",
       notify => Class['apt::update'],
     }
   }
