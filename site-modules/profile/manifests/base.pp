@@ -3,4 +3,5 @@
 class profile::base {
   include profile::base::firewall
   include profile::base::sshd
+  include profile::base::users
 }
