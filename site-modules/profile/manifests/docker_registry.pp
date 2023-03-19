@@ -1,5 +1,5 @@
 class profile::docker_registry {
-  include profile::docker
+  include docker
 
   docker::image { 'rpardini/docker-registry-proxy':
     image_tag => '0.6.4',
