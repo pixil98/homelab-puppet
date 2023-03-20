@@ -13,7 +13,7 @@ class profile::docker_registry {
   }
 
   firewall { '03128 accept - Docker registry proxy':
-    dport  => 3128 ,
+    dport  => 3128,
     proto  => tcp,
     action => accept,
   }
