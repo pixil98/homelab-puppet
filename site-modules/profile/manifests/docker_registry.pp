@@ -1,5 +1,6 @@
 class profile::docker_registry {
-  include docker
+  class { 'docker': }
+  -> User <| title == provisioned-user |> { groups +> 'docker' }
 
   docker::image { 'rpardini/docker-registry-proxy':
     image_tag => '0.6.4',
