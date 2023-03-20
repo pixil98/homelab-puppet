@@ -10,6 +10,7 @@ class profile::docker_registry {
     ports => ['3128:3128'],
     env   => [
       'REGISTRIES="ghcr.io k8s.gcr.io gcr.io quay.io"',
+      'AUTH_REGISTRIES=""',
     ],
   }
 
