@@ -16,6 +16,6 @@ class profile::docker_registry {
   firewall { '05000 accept - Container Registry':
     dport  => 5000,
     proto  => tcp,
-    action => accept,
+    jump   => accept,
   }
 }
