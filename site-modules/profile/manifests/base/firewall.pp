@@ -1,10 +1,10 @@
 class profile::base::firewall {
-  include firewall
+  class { 'firewall': }
 
   # Set default to purge unmanaged firewall resources
-  #resources { 'firewall':
-  #  purge => true,
-  #}
+  resources { 'firewall':
+    purge => true,
+  }
   #resources { 'firewallchain':
   #  purge => true,
   #}
