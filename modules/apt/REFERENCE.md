@@ -168,8 +168,10 @@ Options:
 `apt-get update` runs regardless of this value.
 Valid options:
   'always' (at every Puppet run);
-   daily' (if the value of `apt_update_last_success` is less than current epoch time minus 86400);
+  'hourly' (if the value of `apt_update_last_success` is less than current epoch time minus 3600);
+  'daily'  (if the value of `apt_update_last_success` is less than current epoch time minus 86400);
   'weekly' (if the value of `apt_update_last_success` is less than current epoch time minus 604800);
+  Integer  (if the value of `apt_update_last_success` is less than current epoch time minus provided Integer value);
   'reluctantly' (only if the exec resource `apt_update` is notified).
 Default: 'reluctantly'.
 * **:loglevel** `Integer`: Specifies the log level of logs outputted to the console. Default: undef.
@@ -404,18 +406,10 @@ Manages backports.
 
 #### Examples
 
-##### Set up a backport source for Linux Mint qiana
+##### Set up a backport source for Ubuntu
 
 ```puppet
-class { 'apt::backports':
-  location => 'http://us.archive.ubuntu.com/ubuntu',
-  release  => 'trusty-backports',
-  repos    => 'main universe multiverse restricted',
-  key      => {
-    id     => '630239CC130E1A7FD81A27B140976EAF437D05B5',
-    server => 'keyserver.ubuntu.com',
-  },
-}
+include apt::backports
 ```
 
 #### Parameters
@@ -426,6 +420,7 @@ The following parameters are available in the `apt::backports` class:
 * [`release`](#-apt--backports--release)
 * [`repos`](#-apt--backports--repos)
 * [`key`](#-apt--backports--key)
+* [`keyring`](#-apt--backports--keyring)
 * [`pin`](#-apt--backports--pin)
 * [`include`](#-apt--backports--include)
 
@@ -473,6 +468,16 @@ Specifies a key to authenticate the backports. Valid options: a string to be pas
 hash of parameter => value pairs to be passed to apt::key's id, server, content, source, and/or options parameters.
 
 Default value: `undef`
+
+##### <a name="-apt--backports--keyring"></a>`keyring`
+
+Data type: `Stdlib::AbsolutePath`
+
+Absolute path to a file containing the PGP keyring used to sign this
+repository. Value is passed to the apt::source and used to set signed-by on
+the source entry.
+
+Default value: `"/usr/share/keyrings/${facts['os']['name'].downcase}-archive-keyring.gpg"`
 
 ##### <a name="-apt--backports--pin"></a>`pin`
 

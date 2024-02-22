@@ -41,8 +41,10 @@
 #   `apt-get update` runs regardless of this value.
 #   Valid options:
 #     'always' (at every Puppet run); 
-#      daily' (if the value of `apt_update_last_success` is less than current epoch time minus 86400);
+#     'hourly' (if the value of `apt_update_last_success` is less than current epoch time minus 3600);
+#     'daily'  (if the value of `apt_update_last_success` is less than current epoch time minus 86400);
 #     'weekly' (if the value of `apt_update_last_success` is less than current epoch time minus 604800);
+#     Integer  (if the value of `apt_update_last_success` is less than current epoch time minus provided Integer value);
 #     'reluctantly' (only if the exec resource `apt_update` is notified).
 #   Default: 'reluctantly'.
 #
@@ -193,7 +195,7 @@ class apt (
 
   if $update['frequency'] {
     assert_type(
-      Enum['always','daily','weekly','reluctantly'],
+      Variant[Enum['always','hourly','daily','weekly','reluctantly'],Integer[60]],
       $update['frequency'],
     )
   }

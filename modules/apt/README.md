@@ -119,7 +119,7 @@ If you raise the priority through the `pin` parameter to 500, normal policy goes
 
 ### Update the list of packages
 
-By default, Puppet runs `apt-get update` on the first Puppet run after you include the `apt` class, and anytime `notify => Exec['apt_update']` occurs; i.e., whenever config files get updated or other relevant changes occur. If you set `update['frequency']` to 'always', the update runs on every Puppet run. You can also set `update['frequency']` to 'daily' or 'weekly':
+By default, Puppet runs `apt-get update` on the first Puppet run after you include the `apt` class, and anytime `notify => Exec['apt_update']` occurs; i.e., whenever config files get updated or other relevant changes occur. If you set `update['frequency']` to 'always', the update runs on every Puppet run. You can also set `update['frequency']` to 'hourly', 'daily', 'weekly' or any integer value >= 60:
 
 ```puppet
 class { 'apt':

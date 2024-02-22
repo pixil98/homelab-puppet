@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org).
 
+## [v9.4.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.4.0) - 2024-02-15
+
+[Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.2.0...v9.4.0)
+
+### Added
+
+- Backports: add keyring support [#1162](https://github.com/puppetlabs/puppetlabs-apt/pull/1162) ([kenyon](https://github.com/kenyon))
+- Support "hourly" and Integer as value for update frequency (fixes #1157) [#1159](https://github.com/puppetlabs/puppetlabs-apt/pull/1159) ([webcompas](https://github.com/webcompas))
+
+### Fixed
+
+- replace deprecated merge() with native puppet code [#1154](https://github.com/puppetlabs/puppetlabs-apt/pull/1154) ([bastelfreak](https://github.com/bastelfreak))
+
+### Other
+
+- release_prep: Use puppetlabs_spec_helper 7.x [#1164](https://github.com/puppetlabs/puppetlabs-apt/pull/1164) ([bastelfreak](https://github.com/bastelfreak))
+
 ## [v9.2.0](https://github.com/puppetlabs/puppetlabs-apt/tree/v9.2.0) - 2023-12-04
 
 [Full Changelog](https://github.com/puppetlabs/puppetlabs-apt/compare/v9.1.0...v9.2.0)

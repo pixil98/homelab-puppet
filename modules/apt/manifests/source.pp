@@ -144,7 +144,7 @@ define apt::source (
       }
       if $key['id'] {
         # defaults like keyserver are only relevant to apt::key
-        $_key = merge($apt::source_key_defaults, $key)
+        $_key = $apt::source_key_defaults + $key
       } else {
         $_key = $key
       }
