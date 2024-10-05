@@ -27,6 +27,16 @@ class profile::kubernetes::worker {
     proto  => tcp,
     jump   => accept,
   }
+  firewall { '07472 accept - Metallb metrics':
+    dport  => 7472,
+    proto  => tcp,
+    jump   => accept,
+  }
+  firewall { '07473 accept - Metallb frr metrics':
+    dport  => 7473,
+    proto  => tcp,
+    jump   => accept,
+  }
   firewall { '07946 accept - Metallb tcp':
     dport  => 7946,
     proto  => tcp,
