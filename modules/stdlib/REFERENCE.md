@@ -42,7 +42,6 @@ from an array or key from a hash.
 * [`delete_undef_values`](#delete_undef_values): Returns a copy of input hash or array with all undefs deleted.
 * [`delete_values`](#delete_values): Deletes all instances of a given value from a hash.
 * [`deprecation`](#deprecation): Function to print deprecation warnings, Logs a warning once for a given key.
-* [`deprecation`](#deprecation): Function to print deprecation warnings (this is the 3.X version of it).
 * [`difference`](#difference): This function returns the difference between two arrays.
 * [`dirname`](#dirname): Returns the dirname of a path.
 * [`dos2unix`](#dos2unix): Returns the Unix version of the given string.
@@ -140,8 +139,10 @@ Puppet structure
 * [`stdlib::seeded_rand_string`](#stdlib--seeded_rand_string): Generates a consistent random string of specific length based on provided seed.
 * [`stdlib::sha256`](#stdlib--sha256): Run a SHA256 calculation against a given value.
 * [`stdlib::shell_escape`](#stdlib--shell_escape): Escapes a string so that it can be safely used in a Bourne shell command line.
+* [`stdlib::sort_by`](#stdlib--sort_by): Sort an Array, Hash or String by mapping values through a given block.
 * [`stdlib::start_with`](#stdlib--start_with): Returns true if str starts with one of the prefixes given. Each of the prefixes should be a String.
 * [`stdlib::str2resource`](#stdlib--str2resource): This converts a string to a puppet resource.
+* [`stdlib::time`](#stdlib--time): This function is deprecated. It implements the functionality of the original non-namespaced stdlib `time` function.
 * [`stdlib::to_json`](#stdlib--to_json): Convert a data structure and output to JSON
 * [`stdlib::to_json_pretty`](#stdlib--to_json_pretty): Convert data structure and output to pretty JSON
 * [`stdlib::to_python`](#stdlib--to_python): Convert an object into a String containing its Python representation
@@ -161,7 +162,7 @@ OS X versions >= 10.7).
 * [`suffix`](#suffix): This function applies a suffix to all elements in an array, or to the keys
 in a hash.
 * [`swapcase`](#swapcase): This function will swap the existing case of a string.
-* [`time`](#time): This function will return the current time since epoch as an integer.
+* [`time`](#time): DEPRECATED.  Use the native Puppet fuctionality instead of this function. eg `Integer(Timestamp().strftime('%s'))`
 * [`to_bytes`](#to_bytes): Converts the argument into bytes, for example 4 kB becomes 4096.
 * [`to_json`](#to_json): DEPRECATED.  Use the namespaced function [`stdlib::to_json`](#stdlibto_json) instead.
 * [`to_json_pretty`](#to_json_pretty): DEPRECATED.  Use the namespaced function [`stdlib::to_json_pretty`](#stdlibto_json_pretty) instead.
@@ -265,20 +266,33 @@ and `subscribe`.
 
 ```puppet
 class { 'stdlib::manage':
-    'create_resources' => {
-      'file' => {
-        '/etc/motd.d/hello' => {
-          'content' => 'I say Hi',
-          'notify' => 'Service[sshd]',
+  'create_resources'      => {
+    'file'                => {
+      '/etc/motd.d/hello' => {
+        'content'         => 'I say Hi',
+        'notify'          => 'Service[sshd]',
+      },
+      '/etc/motd'         => {
+        'ensure'          => 'file',
+        'epp'             => {
+          'template'      => 'profile/motd.epp',
         }
       },
-      'package' => {
-        'example' => {
-          'ensure' => 'installed',
-          'subscribe' => ['Service[sshd]', 'Exec[something]'],
+      '/etc/information'  => {
+        'ensure'          => 'file',
+        'erb'             => {
+          'template'      => 'profile/informaiton.erb',
         }
       }
+    },
+    'package'             => {
+      'example'           => {
+        'ensure'          => 'installed',
+        'subscribe'       => ['Service[sshd]', 'Exec[something]'],
+      }
     }
+  }
+}
 ```
 
 ##### 
@@ -289,6 +303,15 @@ stdlib::manage::create_resources:
     '/etc/motd.d/hello':
       content: I say Hi
       notify: 'Service[sshd]'
+    '/etc/motd':
+      ensure: 'file'
+      epp:
+        template: 'profile/motd.epp'
+        context: {}
+    '/etc/information':
+      ensure: 'file'
+      erb:
+        template: 'profile/information.erb'
   package:
     example:
       ensure: installed
@@ -308,7 +331,8 @@ The following parameters are available in the `stdlib::manage` class:
 Data type: `Hash[String, Hash]`
 
 A hash of resources to create
-NOTE: functions, such as `template` or `epp`, are not evaluated.
+NOTE: functions, such as `template` or `epp`, are not directly evaluated
+      but processed as Puppet code based on epp and erb hash keys.
 
 Default value: `{}`
 
@@ -1479,20 +1503,6 @@ Data type: `Optional[Boolean]`
 When `true`, (the default), the function is affected by the puppet setting 'strict', which can be set to :error
 (outputs as an error message), :off (no message / error is displayed) and :warning
 (default, outputs a warning).
-
-### <a name="deprecation"></a>`deprecation`
-
-Type: Ruby 3.x API
-
-The uniqueness key - can appear once. The msg is the message text including any positional
-information that is formatted by the user/caller of the method.).
-
-#### `deprecation()`
-
-The uniqueness key - can appear once. The msg is the message text including any positional
-information that is formatted by the user/caller of the method.).
-
-Returns: `String` return deprecation warnings
 
 ### <a name="difference"></a>`difference`
 
@@ -4017,6 +4027,75 @@ Data type: `Any`
 
 The string to escape
 
+### <a name="stdlib--sort_by"></a>`stdlib::sort_by`
+
+Type: Ruby 4.x API
+
+Sort an Array, Hash or String by mapping values through a given block.
+
+#### Examples
+
+##### Sort local devices according to their used space.
+
+```puppet
+$facts['mountpoints'].stdlib::sort_by |$m| { $m.dig(1, 'used_bytes') }
+```
+
+#### `stdlib::sort_by(Array $ary, Callable[1,1] &$block)`
+
+The stdlib::sort_by function.
+
+Returns: `Array` Returns an ordered copy of ary.
+
+##### `ary`
+
+Data type: `Array`
+
+The Array to sort.
+
+##### `&block`
+
+Data type: `Callable[1,1]`
+
+The block for transforming elements of ary.
+
+#### `stdlib::sort_by(String $str, Callable[1,1] &$block)`
+
+The stdlib::sort_by function.
+
+Returns: `String` Returns an ordered copy of str.
+
+##### `str`
+
+Data type: `String`
+
+The String to sort.
+
+##### `&block`
+
+Data type: `Callable[1,1]`
+
+The block for transforming elements of str.
+
+#### `stdlib::sort_by(Hash $hsh, Variant[Callable[1,1], Callable[2,2]] &$block)`
+
+The stdlib::sort_by function.
+
+Returns: `Hash` Returns an ordered copy of hsh.
+
+##### `hsh`
+
+Data type: `Hash`
+
+The Hash to sort.
+
+##### `&block`
+
+Data type: `Variant[Callable[1,1], Callable[2,2]]`
+
+The block for transforming elements of hsh.
+The block may have arity of one or two.
+
 ### <a name="stdlib--start_with"></a>`stdlib::start_with`
 
 Type: Ruby 4.x API
@@ -4110,6 +4189,24 @@ stdlib::str2resource('File[/foo]') => File[/foo]
 Data type: `String`
 
 The string to lookup as a resource
+
+### <a name="stdlib--time"></a>`stdlib::time`
+
+Type: Puppet Language
+
+It is provided for compatability, but users should use the native time related functions directly.
+
+#### `stdlib::time(Optional[String] $_timezone = undef)`
+
+It is provided for compatability, but users should use the native time related functions directly.
+
+Returns: `Integer`
+
+##### `_timezone`
+
+Data type: `Optional[String]`
+
+This parameter doesn't do anything, but exists for compatability reasons
 
 ### <a name="stdlib--to_json"></a>`stdlib::to_json`
 
@@ -4876,43 +4973,21 @@ Would result in: "AbCd"
 
 ### <a name="time"></a>`time`
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-> *Note:* that since Puppet 4.8.0 the Puppet language has the data types Timestamp (a point in time) and
-Timespan (a duration). The following example is equivalent to calling time() without
-any arguments:
+DEPRECATED.  Use the native Puppet fuctionality instead of this function. eg `Integer(Timestamp().strftime('%s'))`
 
-```Timestamp()```
+#### `time(Any *$args)`
 
-#### Examples
+The time function.
 
-##### **Usage**
+Returns: `Any`
 
-```puppet
+##### `*args`
 
-time()
-Will return something like: 1311972653
-```
+Data type: `Any`
 
-#### `time()`
 
-> *Note:* that since Puppet 4.8.0 the Puppet language has the data types Timestamp (a point in time) and
-Timespan (a duration). The following example is equivalent to calling time() without
-any arguments:
-
-```Timestamp()```
-
-Returns: `Any` the current time since epoch as an integer.
-
-##### Examples
-
-###### **Usage**
-
-```puppet
-
-time()
-Will return something like: 1311972653
-```
 
 ### <a name="to_bytes"></a>`to_bytes`
 
