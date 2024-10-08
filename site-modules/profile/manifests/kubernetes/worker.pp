@@ -57,6 +57,11 @@ class profile::kubernetes::worker {
     proto  => tcp,
     jump   => accept,
   }
+  firewall { '09100 accept - node exporter':
+    dport  => 9100,
+    proto  => tcp,
+    jump   => accept,
+  }
   firewall { '10250 accept - kubelet':
     dport  => 10250,
     proto  => tcp,
