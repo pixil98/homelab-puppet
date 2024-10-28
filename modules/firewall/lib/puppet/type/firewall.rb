@@ -948,7 +948,7 @@ Puppet::ResourceApi.register_type(
       DESC
     },
     ipset: {
-      type: 'Optional[Variant[Pattern[/^(?:!\s)?\w+\s(?:src|dst)(?:,src|,dst)?$/], Array[Pattern[/^(?:!\s)?\w+\s(?:src|dst)(?:,src|,dst)?$/]]]]',
+      type: 'Optional[Variant[Pattern[/^(?:!\s)?[\w\-:_]+\s(?:src|dst)(?:,src|,dst)?$/], Array[Pattern[/^(?:!\s)?[\w\-:_]+\s(?:src|dst)(?:,src|,dst)?$/]]]]',
       desc: <<-DESC
       Matches against the specified ipset list.
       Requires ipset kernel module. Will accept a single element or an array.
@@ -1278,9 +1278,9 @@ Puppet::ResourceApi.register_type(
       DESC
     },
     match_mark: {
-      type: 'Optional[Pattern[/^(?:!\s)?[a-fA-F0-9x]+$/]]',
+      type: 'Optional[Pattern[/^(?:!\s)?[a-fA-F0-9x]+(?:\/[a-fA-F0-9x]+)?$/]]',
       desc: <<-DESC
-      Match the Netfilter mark value associated with the packet, accepts a mark.
+      Match the Netfilter mark value associated with the packet. Accepts either of mark/mask or mark.
       This value will be converted to hex if it is not already.
       This value can be negated by adding a space seperated `!` to the beginning.
       DESC
@@ -1313,9 +1313,9 @@ Puppet::ResourceApi.register_type(
       DESC
     },
     connmark: {
-      type: 'Optional[Pattern[/^(?:!\s)?[a-fA-F0-9x]+$/]]',
+      type: 'Optional[Pattern[/^(?:!\s)?[a-fA-F0-9x]+(?:\/[a-fA-F0-9x]+)?$/]]',
       desc: <<-DESC
-      Match the Netfilter mark value associated with the packet, accepts a mark.
+      Match the Netfilter mark value associated with the packet. Accepts either of mark/mask or mark.
       This value will be converted to hex if it is not already.
       This value can be negated by adding a space seperated `!` to the beginning.
       DESC
