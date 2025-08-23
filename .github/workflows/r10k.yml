@@ -6,7 +6,7 @@ name: r10k
 on:
   push:
     branches:
-      - '**'
+      - "**"
 
 jobs:
   puppetfile:
