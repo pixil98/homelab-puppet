@@ -63,9 +63,8 @@ environment.
 * [`grep`](#grep): This function searches through an array and returns any elements that match
 the provided regular expression.
 * [`has_interface_with`](#has_interface_with): DEPRECATED.  Use the namespaced function [`stdlib::has_interface_with`](#stdlibhas_interface_with) instead.
-* [`has_interface_with`](#has_interface_with): Returns boolean based on kind and value.
-* [`has_ip_address`](#has_ip_address): Returns true if the client has the requested IP address on some interface.
-* [`has_ip_network`](#has_ip_network): Returns true if the client has an IP address within the requested network.
+* [`has_ip_address`](#has_ip_address): DEPRECATED.  Use the namespaced function [`stdlib::has_ip_address`](#stdlibhas_ip_address) instead.
+* [`has_ip_network`](#has_ip_network): DEPRECATED.  Use the namespaced function [`stdlib::has_ip_network`](#stdlibhas_ip_network) instead.
 * [`intersection`](#intersection): This function returns an array of the intersection of two.
 * [`is_a`](#is_a): Boolean check to determine whether a variable is of a given data type.
 This is equivalent to the `=~` type checks.
@@ -126,6 +125,8 @@ optional seed for repeatable randomness.
 * [`stdlib::fqdn_rotate`](#stdlib--fqdn_rotate): Rotates an array or string a random number of times, combining the `fqdn` fact and an optional seed for repeatable randomness.
 * [`stdlib::has_function`](#stdlib--has_function): Returns whether the Puppet runtime has access to a given function.
 * [`stdlib::has_interface_with`](#stdlib--has_interface_with): Returns boolean based on network interfaces present and their attribute values.
+* [`stdlib::has_ip_address`](#stdlib--has_ip_address): Returns true if the client has the requested IPv4 address on some interface.
+* [`stdlib::has_ip_network`](#stdlib--has_ip_network): Returns true if the client has the requested IPv4 network on some interface.
 * [`stdlib::ip_in_range`](#stdlib--ip_in_range): Returns true if the ipaddress is within the given CIDRs
 * [`stdlib::merge`](#stdlib--merge): Merges two or more hashes together or hashes resulting from iteration, and returns
 the resulting hash.
@@ -135,6 +136,7 @@ This function will return list of nested Hash values and returns list of values 
 * [`stdlib::parsehocon`](#stdlib--parsehocon): This function accepts HOCON as a string and converts it into the correct
 Puppet structure
 * [`stdlib::powershell_escape`](#stdlib--powershell_escape): Escapes a string so that it can be safely used in a PowerShell command line.
+* [`stdlib::rewrap_sensitive_data`](#stdlib--rewrap_sensitive_data): Unwraps any sensitives in data and returns a sensitive
 * [`stdlib::seeded_rand`](#stdlib--seeded_rand): Generates a random whole number greater than or equal to 0 and less than max, using the value of seed for repeatable randomness.
 * [`stdlib::seeded_rand_string`](#stdlib--seeded_rand_string): Generates a consistent random string of specific length based on provided seed.
 * [`stdlib::sha256`](#stdlib--sha256): Run a SHA256 calculation against a given value.
@@ -2052,75 +2054,41 @@ Data type: `Any`
 
 
 
-### <a name="has_interface_with"></a>`has_interface_with`
-
-Type: Ruby 3.x API
-
-Valid kinds are `macaddress`, `netmask`, `ipaddress` and `network`.
-
-#### Examples
-
-##### **Usage**
-
-```puppet
-has_interface_with("macaddress", "x:x:x:x:x:x") # Returns `false`
-has_interface_with("ipaddress", "127.0.0.1") # Returns `true`
-```
-
-##### If no "kind" is given, then the presence of the interface is checked:
-
-```puppet
-has_interface_with("lo") # Returns `true`
-```
-
-#### `has_interface_with()`
-
-Valid kinds are `macaddress`, `netmask`, `ipaddress` and `network`.
-
-Returns: `Any` boolean values `true` or `false`
-
-##### Examples
-
-###### **Usage**
-
-```puppet
-has_interface_with("macaddress", "x:x:x:x:x:x") # Returns `false`
-has_interface_with("ipaddress", "127.0.0.1") # Returns `true`
-```
-
-###### If no "kind" is given, then the presence of the interface is checked:
-
-```puppet
-has_interface_with("lo") # Returns `true`
-```
-
 ### <a name="has_ip_address"></a>`has_ip_address`
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-This function iterates through the 'interfaces' fact and checks the
-'ipaddress_IFACE' facts, performing a simple string comparison.
+DEPRECATED.  Use the namespaced function [`stdlib::has_ip_address`](#stdlibhas_ip_address) instead.
 
-#### `has_ip_address()`
+#### `has_ip_address(Any *$args)`
 
-This function iterates through the 'interfaces' fact and checks the
-'ipaddress_IFACE' facts, performing a simple string comparison.
+The has_ip_address function.
 
-Returns: `Boolean` `true` or `false`
+Returns: `Any`
+
+##### `*args`
+
+Data type: `Any`
+
+
 
 ### <a name="has_ip_network"></a>`has_ip_network`
 
-Type: Ruby 3.x API
+Type: Ruby 4.x API
 
-This function iterates through the 'interfaces' fact and checks the
-'network_IFACE' facts, performing a simple string comparision.
+DEPRECATED.  Use the namespaced function [`stdlib::has_ip_network`](#stdlibhas_ip_network) instead.
 
-#### `has_ip_network()`
+#### `has_ip_network(Any *$args)`
 
-This function iterates through the 'interfaces' fact and checks the
-'network_IFACE' facts, performing a simple string comparision.
+The has_ip_network function.
 
-Returns: `Any` Boolean value, `true` if the client has an IP address within the requested network.
+Returns: `Any`
+
+##### `*args`
+
+Data type: `Any`
+
+
 
 ### <a name="intersection"></a>`intersection`
 
@@ -3575,6 +3543,42 @@ Data type: `String[1]`
 
 The value of the attribute
 
+### <a name="stdlib--has_ip_address"></a>`stdlib::has_ip_address`
+
+Type: Puppet Language
+
+Returns true if the client has the requested IPv4 address on some interface.
+
+#### `stdlib::has_ip_address(Stdlib::IP::Address::V4::Nosubnet $ip_address)`
+
+The stdlib::has_ip_address function.
+
+Returns: `Boolean` Returns `true` if the requested IP address exists on any interface.
+
+##### `ip_address`
+
+Data type: `Stdlib::IP::Address::V4::Nosubnet`
+
+The IPv4 address you want to check the existence of
+
+### <a name="stdlib--has_ip_network"></a>`stdlib::has_ip_network`
+
+Type: Puppet Language
+
+Returns true if the client has the requested IPv4 network on some interface.
+
+#### `stdlib::has_ip_network(Stdlib::IP::Address::V4::Nosubnet $ip_network)`
+
+The stdlib::has_ip_network function.
+
+Returns: `Boolean` Returns `true` if the requested IP network exists on any interface.
+
+##### `ip_network`
+
+Data type: `Stdlib::IP::Address::V4::Nosubnet`
+
+The IPv4 network you want to check the existence of
+
 ### <a name="stdlib--ip_in_range"></a>`stdlib::ip_in_range`
 
 Type: Ruby 4.x API
@@ -3860,6 +3864,50 @@ Returns: `Any` An escaped string that can be safely used in a PowerShell command
 Data type: `Any`
 
 The string to escape
+
+### <a name="stdlib--rewrap_sensitive_data"></a>`stdlib::rewrap_sensitive_data`
+
+Type: Ruby 4.x API
+
+It's not uncommon to have Sensitive strings as values within a hash or array.
+Before passing the data to a type property or another function, it's useful
+to be able to `unwrap` these values first. This function does this. If
+sensitive data was included in the data, the whole result is then rewrapped
+as Sensitive.
+
+Optionally, this function can be passed a block. When a block is given, it will
+be run with the unwrapped data, but before the final rewrapping.  This is useful
+to provide transparent rewrapping to other functions in stdlib especially.
+
+This is analogous to the way `epp` transparently handles sensitive parameters.
+
+#### `stdlib::rewrap_sensitive_data(Any $data, Optional[Callable[Any]] &$block)`
+
+It's not uncommon to have Sensitive strings as values within a hash or array.
+Before passing the data to a type property or another function, it's useful
+to be able to `unwrap` these values first. This function does this. If
+sensitive data was included in the data, the whole result is then rewrapped
+as Sensitive.
+
+Optionally, this function can be passed a block. When a block is given, it will
+be run with the unwrapped data, but before the final rewrapping.  This is useful
+to provide transparent rewrapping to other functions in stdlib especially.
+
+This is analogous to the way `epp` transparently handles sensitive parameters.
+
+Returns: `Any` Returns the rewrapped data
+
+##### `data`
+
+Data type: `Any`
+
+The data
+
+##### `&block`
+
+Data type: `Optional[Callable[Any]]`
+
+A lambda that will be run after the data has been unwrapped, but before it is rewrapped, (if it contained sensitives)
 
 ### <a name="stdlib--seeded_rand"></a>`stdlib::seeded_rand`
 
@@ -4485,7 +4533,7 @@ file { '/tmp/config.toml':
 
 The stdlib::to_toml function.
 
-Returns: `String` Converted data as TOML string
+Returns: `Variant[String, Sensitive[String]]` Converted data as TOML string
 
 ##### Examples
 
